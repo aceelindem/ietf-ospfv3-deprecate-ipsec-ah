@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="rfc2629.xslt"?>
+<!DOCTYPE rfc [
+  <!ENTITY nbsp "&#160;">
+  <!ENTITY zwsp "&#8203;">
+  <!ENTITY nbhy "&#8209;">
+  <!ENTITY wj "&#8288;">
+]>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude"
+     category="std"
+     docName="draft-acee-lsr-ospfv3-deprecate-ah-00"
+     ipr="trust200902"
+     updates="4552"
+     submissionType="IETF"
+     consensus="true"
+     sortRefs="true"
+     symRefs="true"
+     tocInclude="true"
+     version="3">
+
+  <front>
+    <title abbrev="Deprecating AH for OSPFv3">Deprecation of the IPsec Authentication Header (AH) for OSPFv3 Authentication</title>
+    <seriesInfo name="Internet-Draft" value="draft-acee-lsr-ospfv3-deprecate-ah-00"/>
+
+    <author initials="A" surname="Lindem" fullname="Acee Lindem">
+      <organization>Arrcus, Inc</organization>
+      <address>
+        <postal>
+          <street>301 Midenhall Way</street>
+          <region>Cary, NC 27513</region>
+          <country>UNITED STATES</country>
+        </postal>
+        <phone/>
+        <email>acee.ietf@gmail.com</email>
+      </address>
+    </author>
+
+    <date/>
+
+    <area>Routing</area>
+    <workgroup>Link State Routing Working Group</workgroup>
+
+    <keyword>OSPFv3</keyword>
+    <keyword>IPsec</keyword>
+    <keyword>AH</keyword>
+    <keyword>ESP</keyword>
+    <keyword>authentication</keyword>
+
+    <abstract>
+      <t>RFC 4552 specifies the use of the IPsec Authentication Header (AH)
+      and the Encapsulating Security Payload (ESP) to provide authentication
+      and confidentiality for OSPFv3. This document deprecates the use of
+      AH for OSPFv3 and updates RFC 4552 accordingly. Operators are
+      encouraged to use either ESP with NULL encryption, as specified in
+      RFC 4552, or the OSPFv3 Authentication Trailer, as specified in
+      RFC 7166.</t>
+    </abstract>
+  </front>
+
+  <middle>
+
+    <section anchor="intro" numbered="true" toc="default">
+      <name>Introduction</name>
+      <t><xref target="RFC4552"/> specifies how IPsec
+      <xref target="RFC4301"/> is used to secure OSPFv3
+      protocol exchanges. It requires support for ESP
+      <xref target="RFC4303"/> and permits the use of AH
+      <xref target="RFC4302"/>.</t>
+
+      <t>Since the publication of <xref target="RFC4552"/>,
+      AH has seen very limited adoption and is now an optional-to-implement
+      protocol in the IPsec cryptographic requirements
+      <xref target="RFC8221"/>. The OSPFv3 Authentication
+      Trailer <xref target="RFC7166"/> provides an
+      IPsec-independent alternative that has been widely implemented. This
+      document deprecates the use of AH for OSPFv3 in order to reduce
+      implementation and operational complexity and to consolidate on the
+      mechanisms that are actually deployed.</t>
+
+      <section anchor="reqlang" numbered="true" toc="default">
+        <name>Requirements Language</name>
+        <t>The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>",
+        "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>",
+        "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>",
+        "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>",
+        "<bcp14>NOT RECOMMENDED</bcp14>", "<bcp14>MAY</bcp14>", and
+        "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+        described in BCP 14 <xref target="RFC2119"/>
+        <xref target="RFC8174"/> when, and only when, they
+        appear in all capitals, as shown here.</t>
+      </section>
+    </section>
+
+    <section anchor="rationale" numbered="true" toc="default">
+      <name>Rationale</name>
+      <t>The following factors motivate the deprecation of AH for
+      OSPFv3:</t>
+      <ul spacing="normal">
+        <li>AH is optional to implement for IPsec <xref target="RFC8221"
+       />, and many IPsec implementations no longer
+        support it.</li>
+        <li>ESP with NULL encryption provides integrity and authentication
+        of the OSPFv3 packet, and this combination is already mandated by
+        <xref target="RFC4552"/>. Supporting AH in addition
+        to ESP adds little value for OSPFv3.</li>
+        <li>OSPFv3 packets are sent on a single link using link-local
+        addresses with a hop limit of 1, which limits the additional
+        protection afforded by AH coverage of immutable IPv6 header fields.
+        The OSPFv3 Authentication Trailer <xref target="RFC7166"
+       /> additionally covers the IPv6 source address of
+        the packet.</li>
+        <li>Maintaining separate AH and ESP code paths, key management
+        configuration, and operational procedures for OSPFv3 increases
+        complexity without a corresponding benefit.</li>
+      </ul>
+    </section>
+
+    <section anchor="deprecation" numbered="true" toc="default">
+      <name>Deprecation of AH for OSPFv3</name>
+      <t>The use of the IPsec Authentication Header (AH) to authenticate
+      OSPFv3 packets is deprecated. This document updates
+      <xref target="RFC4552"/> as follows:</t>
+      <ol spacing="normal" type="1">
+        <li>All text in <xref target="RFC4552"/> that
+        permits or describes the use of AH for OSPFv3 is deprecated. This
+        includes the use of AH as the authentication mechanism for OSPFv3
+        packets and the AH-specific requirements for Security Associations
+        (SAs) used by OSPFv3.</li>
+        <li>New OSPFv3 implementations <bcp14>SHOULD NOT</bcp14> implement
+        AH for OSPFv3 authentication.</li>
+        <li>Existing implementations that support AH for OSPFv3
+        <bcp14>MAY</bcp14> continue to do so for backward compatibility but
+        <bcp14>SHOULD</bcp14> indicate to the operator that the
+        configuration is deprecated.</li>
+        <li>Operators <bcp14>SHOULD</bcp14> migrate OSPFv3 deployments that
+        use AH to either ESP with NULL encryption, as specified in
+        <xref target="RFC4552"/>, or the OSPFv3
+        Authentication Trailer, as specified in
+        <xref target="RFC7166"/>.</li>
+      </ol>
+      <t>The requirements of <xref target="RFC4552"/>
+      pertaining to ESP are unchanged by this document.</t>
+    </section>
+
+    <section anchor="migration" numbered="true" toc="default">
+      <name>Migration Considerations</name>
+      <t>An OSPFv3 interface or virtual link is configured with a single
+      authentication mechanism, and all routers on the link must agree on
+      it. Migration from AH therefore requires coordinated changes on all
+      routers attached to the link. Operators can minimize disruption by
+      first configuring the new authentication mechanism and keys on all
+      routers in a maintenance window, or by using a staged approach on
+      implementations that support accepting more than one mechanism during
+      a transition period. Manual keying, as required by
+      <xref target="RFC4552"/>, remains the only keying
+      method specified for OSPFv3 use of IPsec.</t>
+    </section>
+
+    <section anchor="security" numbered="true" toc="default">
+      <name>Security Considerations</name>
+      <t>This document does not introduce new protocol mechanisms. It
+      reduces the set of authentication options for OSPFv3 and directs
+      operators to mechanisms that remain in active use and maintenance.
+      ESP with NULL encryption and the OSPFv3 Authentication Trailer both
+      provide authentication and integrity protection of OSPFv3 packets.
+      Neither protects against a compromised router that holds valid keys.
+      Operators are reminded to use strong cryptographic algorithms as
+      described in <xref target="RFC8221"/> and
+      <xref target="RFC7166"/>, and to rotate keys
+      periodically.</t>
+    </section>
+
+    <section anchor="iana" numbered="true" toc="default">
+      <name>IANA Considerations</name>
+      <t>This document has no IANA actions.</t>
+    </section>
+
+  </middle>
+
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4552.xml"/>
+      </references>
+      <references>
+        <name>Informative References</name>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4301.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7166.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8221.xml"/>
+      </references>
+    </references>
+
+    <section anchor="acks" numbered="false" toc="default">
+      <name>Acknowledgements</name>
+      <t>
+        Claude Sonnet 5.5 was used to assist in the preparation and editing of
+        this document.
+      </t>  
+    </section>
+  </back>
+</rfc>
