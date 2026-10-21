@@ -9,7 +9,7 @@
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
      category="std"
      submissionType="IETF"
-     docName="draft-acee-lsr-ospfv3-deprecate-ah-01"
+     docName="draft-acee-lsr-ospfv3-deprecate-ah-02"
      ipr="trust200902"
      updates="4552"
      consensus="true"
@@ -20,7 +20,7 @@
 
   <front>
     <title abbrev="Deprecating AH for OSPFv3">Deprecation of the IPsec Authentication Header (AH) for OSPFv3 Authentication</title>
-    <seriesInfo name="Internet-Draft" value="draft-acee-lsr-ospfv3-deprecate-ah-01"/>
+    <seriesInfo name="Internet-Draft" value="draft-acee-lsr-ospfv3-deprecate-ah-02"/>
 
     <author initials="A" surname="Lindem" fullname="Acee Lindem">
       <organization>Arrcus, Inc</organization>
@@ -48,7 +48,7 @@
       </address>
     </author>
 
-    <date year="2026" month="October" day="2"/>
+    <date year="2026" month="October" day="21"/>
 
     <area>Routing</area>
     <workgroup>Link State Routing Working Group</workgroup>
@@ -128,10 +128,15 @@
         of the OSPFv3 packet, and this combination is already mandated by
         <xref target="RFC4552"/>. Supporting AH in addition
         to ESP adds little value for OSPFv3.</li>
-        <li>OSPFv3 packets are sent on a single link using link-local
+        <li>OSPFv3 packets sent on non-virtual links use link-local
         addresses with a hop limit of 1, which limits the additional
         protection afforded by AH coverage of immutable IPv6 header fields.
-        The OSPFv3 Authentication Trailer <xref target="RFC7166"
+        OSPFv3 packets sent on virtual links may traverse multiple hops, so
+        the hop limit cannot be restricted to 1. The Generalized TTL Security
+        Mechanism (GTSM) <xref target="RFC5082"/> can be used for virtual
+        links to limit the exposure of the network to forged protocol packets
+        originating from outside the network. The OSPFv3 Authentication
+        Trailer <xref target="RFC7166"
        /> additionally covers the IPv6 source address of
         the packet.</li>
         <li>Maintaining separate AH and ESP code paths, key management
@@ -173,10 +178,8 @@
       authentication mechanism, and all routers on the link must agree on
       it. Migration from AH therefore requires coordinated changes on all
       routers attached to the link. Operators can minimize disruption by
-      first configuring the new authentication mechanism and keys on all
-      routers in a maintenance window, or by using a staged approach on
-      implementations that support accepting more than one mechanism during
-      a transition period. Manual keying, as required by
+      configuring the new authentication mechanism and keys on all
+      routers in a maintenance window. Manual keying, as required by
       <xref target="RFC4552"/>, remains the only keying
       method specified for OSPFv3 use of IPsec.</t>
     </section>
@@ -194,6 +197,14 @@
       <xref target="RFC7166"/>, and to rotate keys
       periodically.</t>
 
+      <t>The two alternatives differ with respect to replay protection. The
+      OSPFv3 Authentication Trailer <xref target="RFC7166"/> includes a
+      cryptographic sequence number and therefore provides protection against
+      replay of OSPFv3 packets. ESP with NULL encryption, when used with the
+      manual keying required by <xref target="RFC4552"/>, does not provide
+      replay protection. Operators migrating from AH should take this into
+      account when choosing between the two alternatives.</t>
+
       <t>In addition to the OSPFv3 packet, AH authenticates the immutable
       fields of the IPv6 header and any IPv6 extension headers that precede
       it. Neither of the alternatives retained by this document provides
@@ -208,9 +219,14 @@
       these headers.</t>
 
       <t>This loss is of little practical consequence for OSPFv3. OSPFv3
-      packets are sent on a single link using link-local addresses with a
+      packets sent on non-virtual links use link-local addresses with a
       hop limit of 1, and OSPFv3 does not require any IPv6 extension headers
-      for its operation. This is consistent with the observation in
+      for its operation. OSPFv3 packets sent on virtual links may traverse
+      multiple hops and therefore do not have this restriction. For virtual
+      links, the Generalized TTL Security Mechanism (GTSM)
+      <xref target="RFC5082"/> can be used to limit the exposure of the
+      network to forged protocol packets originating from outside the
+      network. This is consistent with the observation in
       <xref target="I-D.herbert-deprecate-auth-header"/> that the additional
       coverage afforded by AH over ESP is marginal. The difference is
       nonetheless noted here so that it is an explicit part of the migration
@@ -238,6 +254,7 @@
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4301.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5082.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7166.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8221.xml"/>
         <reference anchor="I-D.herbert-deprecate-auth-header" target="https://datatracker.ietf.org/doc/html/draft-herbert-deprecate-auth-header-01">
@@ -258,6 +275,9 @@
       <t>
         Claude Sonnet 5.5 was used to assist in the preparation and editing of
         this document.
+      </t>  
+      <t>
+        Thanks to Siddhant Mehta for review and comments. 
       </t>  
     </section>
   </back>
