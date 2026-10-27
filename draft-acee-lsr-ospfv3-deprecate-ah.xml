@@ -9,7 +9,7 @@
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
      category="std"
      submissionType="IETF"
-     docName="draft-acee-lsr-ospfv3-deprecate-ah-02"
+     docName="draft-acee-lsr-ospfv3-deprecate-ah-03"
      ipr="trust200902"
      updates="4552"
      consensus="true"
@@ -20,7 +20,7 @@
 
   <front>
     <title abbrev="Deprecating AH for OSPFv3">Deprecation of the IPsec Authentication Header (AH) for OSPFv3 Authentication</title>
-    <seriesInfo name="Internet-Draft" value="draft-acee-lsr-ospfv3-deprecate-ah-02"/>
+    <seriesInfo name="Internet-Draft" value="draft-acee-lsr-ospfv3-deprecate-ah-03"/>
 
     <author initials="A" surname="Lindem" fullname="Acee Lindem">
       <organization>Arrcus, Inc</organization>
@@ -48,7 +48,7 @@
       </address>
     </author>
 
-    <date year="2026" month="October" day="21"/>
+    <date year="2026" month="October" day="27"/>
 
     <area>Routing</area>
     <workgroup>Link State Routing Working Group</workgroup>
@@ -83,7 +83,8 @@
       <t>Since the publication of <xref target="RFC4552"/>,
       AH has seen very limited adoption and is now an optional-to-implement
       protocol in the IPsec cryptographic requirements
-      <xref target="RFC8221"/>. The OSPFv3 Authentication
+      <xref target="RFC8221"/> <xref target="RFC4301"/>.
+      The OSPFv3 Authentication
       Trailer <xref target="RFC7166"/> provides an
       IPsec-independent alternative that has been widely implemented. This
       document deprecates the use of AH for OSPFv3 in order to reduce
@@ -118,8 +119,9 @@
       <t>The following factors motivate the deprecation of AH for
       OSPFv3:</t>
       <ul spacing="normal">
-        <li>AH is optional to implement for IPsec <xref target="RFC8221"
-       />, and many IPsec implementations no longer
+        <li>AH is optional to implement for IPsec <xref target="RFC8221"/>
+        <xref target="RFC4301"/>,
+        and many IPsec implementations no longer
         support it. The general arguments for deprecating AH given in
         <xref target="I-D.herbert-deprecate-auth-header"/>, including the
         marginal value of its additional header coverage relative to ESP,
